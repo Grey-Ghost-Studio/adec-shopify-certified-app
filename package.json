@@ -1,6 +1,7 @@
 {
-  "name": "adec-certified-app",
+  "name": "adec-dev-app",
   "version": "1.0.0",
+  "type": "module",
   "license": "UNLICENSED",
   "scripts": {
     "shopify": "shopify",
@@ -8,9 +9,19 @@
     "dev": "shopify app dev",
     "info": "shopify app info",
     "generate": "shopify app generate",
-    "deploy": "shopify app deploy"
+    "deploy": "shopify app deploy",
+    "netlify-dev": "netlify dev",
+    "deploy-functions": "netlify deploy --prod"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@shopify/shopify-api": "^7.5.0",
+    "axios": "^1.4.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "netlify-cli": "^15.0.0"
+  },
   "trustedDependencies": [
     "@shopify/plugin-cloudflare"
   ],
