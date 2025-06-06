@@ -1,0 +1,13 @@
+[build]
+  # No build needed for simple functions
+  command = "echo 'No build required'"
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[dev]
+  framework = "#static"
+  functions = "netlify/functions"
+  publish = "public"

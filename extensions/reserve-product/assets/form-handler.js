@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Store original button text when page loads
-  const submitButton = document.querySelector('.submit-button');
+  const submitButton = document.querySelector('.reserve__submit-button');
   if (submitButton) {
     submitButton.setAttribute('data-original-text', submitButton.innerText);
   }
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (typeof grecaptcha !== 'undefined') {
         grecaptcha.ready(function() {
           grecaptcha.execute('6LdEHUQrAAAAAA7jJ4O5eYyWjBieJo5WmWLCaRLH', {action: 'reserve_product'}).then(function(token) { // RECAPTCHA_SITE_KEY
-            console.log('reCAPTCHA v3 token received:', token.substring(0, 20) + '...');
+            //console.log('reCAPTCHA v3 token received:', token.substring(0, 20) + '...');
             
             // Add the reCAPTCHA token to form data
             formData.recaptcha_token = token;
@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function getProductInfo() {
   let productInfo = {
-    id: null,
     title: null,
     price: '0.00',
     handle: null,
@@ -89,15 +88,13 @@ function getProductInfo() {
     // Method 1: Try to get product JSON from the page
     const productJson = document.getElementById('ProductJson-product-template');
     if (productJson && productJson.textContent) {
-      console.log("Found product JSON in page");
+      //console.log("Found product JSON in page");
       const product = JSON.parse(productJson.textContent);
       
-      productInfo.id = product.id;
       productInfo.title = product.title;
       productInfo.handle = product.handle;
       
-      console.log("Product JSON data:", {
-        id: product.id,
+      //console.log("Product JSON data:", {
         title: product.title,
         variants_count: product.variants ? product.variants.length : 0
       });
@@ -110,7 +107,7 @@ function getProductInfo() {
       // If no stocking number was found in metafields, try using the handle as stocking number
       if (!productInfo.stocking_number && product.handle && product.handle.match(/^[Rr][0-9]+$/)) {
         productInfo.stocking_number = product.handle;
-        console.log(`Using handle as stocking number: ${productInfo.stocking_number}`);
+        //console.log(`Using handle as stocking number: ${productInfo.stocking_number}`);
       }
       
       // Get selected variant if available
@@ -132,28 +129,16 @@ function getProductInfo() {
           productInfo.price = (selectedVariant.price / 100).toFixed(2);
           productInfo.sku = selectedVariant.sku;
           
-          if (!productInfo.id && selectedVariant.product_id) {
-            productInfo.id = selectedVariant.product_id;
-            console.log(`Using product ID from variant: ${productInfo.id}`);
-          }
-          
-          console.log(`Using variant: ID=${selectedVariant.id}, Price=${productInfo.price}, SKU=${productInfo.sku}`);
+          //console.log(`Using variant: ID=${selectedVariant.id}, Price=${productInfo.price}, SKU=${productInfo.sku}`);
         }
       } else if (product.price !== undefined) {
         productInfo.price = (product.price / 100).toFixed(2);
       }
     } else {
-      console.log("No product JSON found, trying alternative methods");
+      //console.log("No product JSON found, trying alternative methods");
       
-      // Method 2: Try to get product info from meta tags
-      const productIdMeta = document.querySelector('meta[property="product:product_id"]');
+      // Method 2: Try to get product title from meta tags
       const productTitle = document.querySelector('meta[property="og:title"]');
-      
-      if (productIdMeta) {
-        productInfo.id = productIdMeta.content;
-        console.log(`Found product ID in meta tag: ${productInfo.id}`);
-      }
-      
       if (productTitle) productInfo.title = productTitle.content;
       
       // Method 3: Try to get stocking number from DOM element
@@ -197,12 +182,12 @@ function getProductInfo() {
         const productsIndex = pathParts.indexOf('products');
         if (productsIndex >= 0 && pathParts.length > productsIndex + 1) {
           productInfo.handle = pathParts[productsIndex + 1];
-          console.log(`Found product handle in URL: ${productInfo.handle}`);
+          //console.log(`Found product handle in URL: ${productInfo.handle}`);
           
           // Check if handle looks like a stocking number (starts with R followed by numbers)
           if (productInfo.handle.match(/^[Rr][0-9]+$/)) {
             productInfo.stocking_number = productInfo.handle;
-            console.log(`Using handle as stocking number: ${productInfo.stocking_number}`);
+            //console.log(`Using handle as stocking number: ${productInfo.stocking_number}`);
           }
           
           // If we have a handle but no title, use the handle as a fallback
@@ -218,31 +203,20 @@ function getProductInfo() {
       }
     }
     
-    // Try to get product ID from a form with product ID
+    // Try to get variant ID from a form with product ID
     const productForm = document.querySelector('form[action*="/cart/add"]');
     if (productForm) {
       const productInput = productForm.querySelector('input[name="id"]');
       if (productInput) {
         productInfo.variant_id = productInput.value;
-        console.log(`Found variant ID in product form: ${productInfo.variant_id}`);
-        
-        // Try to extract product ID from data attributes
-        if (productForm.hasAttribute('data-product-id')) {
-          productInfo.id = productForm.getAttribute('data-product-id');
-          console.log(`Found product ID in form attribute: ${productInfo.id}`);
-        }
+        //console.log(`Found variant ID in product form: ${productInfo.variant_id}`);
       }
     }
 
     // Look for product info in Shopify.product object if it exists
     if (window.Shopify && window.Shopify.product) {
       const shopifyProduct = window.Shopify.product;
-      console.log("Found Shopify.product:", shopifyProduct);
-      
-      if (!productInfo.id && shopifyProduct.id) {
-        productInfo.id = shopifyProduct.id;
-        console.log(`Found product ID in Shopify.product: ${productInfo.id}`);
-      }
+      //console.log("Found Shopify.product:", shopifyProduct);
       
       if (!productInfo.title && shopifyProduct.title) {
         productInfo.title = shopifyProduct.title;
@@ -250,12 +224,12 @@ function getProductInfo() {
       
       if (shopifyProduct.handle) {
         productInfo.handle = shopifyProduct.handle;
-        console.log(`Found product handle in Shopify.product: ${productInfo.handle}`);
+        //console.log(`Found product handle in Shopify.product: ${productInfo.handle}`);
         
         // Check if handle looks like a stocking number (starts with R followed by numbers)
         if (shopifyProduct.handle.match(/^[Rr][0-9]+$/)) {
           productInfo.stocking_number = shopifyProduct.handle;
-          console.log(`Using handle as stocking number: ${productInfo.stocking_number}`);
+          //console.log(`Using handle as stocking number: ${productInfo.stocking_number}`);
         }
       }
       
@@ -264,7 +238,7 @@ function getProductInfo() {
         
         if (!productInfo.variant_id) {
           productInfo.variant_id = firstVariant.id;
-          console.log(`Found variant ID in Shopify.product: ${productInfo.variant_id}`);
+          //console.log(`Found variant ID in Shopify.product: ${productInfo.variant_id}`);
         }
         
         if (firstVariant.price) {
@@ -276,29 +250,12 @@ function getProductInfo() {
         }
       }
     }
-
-    // If we have a variant ID but no product ID, try to determine the product ID from the page
-    if (!productInfo.id && productInfo.variant_id) {
-      console.log(`Have variant ID (${productInfo.variant_id}) but no product ID, will rely on server to look up product ID`);
-      
-      // We'll pass the variant ID to the server and let it look up the product ID
-      // This is handled in create-draft-order.js
-    }
     
-    // Clean up IDs - ensure they're numeric
-    if (productInfo.id) {
-      if (typeof productInfo.id === 'string' && productInfo.id.includes('gid://')) {
-        productInfo.id = productInfo.id.split('/').pop();
-        console.log(`Extracted numeric ID from GraphQL ID: ${productInfo.id}`);
-      } else if (typeof productInfo.id === 'string') {
-        productInfo.id = parseInt(productInfo.id, 10);
-      }
-    }
-    
+    // Clean up variant ID - ensure it's numeric
     if (productInfo.variant_id) {
       if (typeof productInfo.variant_id === 'string' && productInfo.variant_id.includes('gid://')) {
         productInfo.variant_id = productInfo.variant_id.split('/').pop();
-        console.log(`Extracted numeric variant ID from GraphQL ID: ${productInfo.variant_id}`);
+        //console.log(`Extracted numeric variant ID from GraphQL ID: ${productInfo.variant_id}`);
       } else if (typeof productInfo.variant_id === 'string') {
         productInfo.variant_id = parseInt(productInfo.variant_id, 10);
       }
@@ -306,10 +263,10 @@ function getProductInfo() {
 
     if (!productInfo.stocking_number && productInfo.handle && productInfo.handle.match(/^[Rr][0-9]+$/)) {
       productInfo.stocking_number = productInfo.handle;
-      console.log(`Using handle as stocking number: ${productInfo.stocking_number}`);
+      //console.log(`Using handle as stocking number: ${productInfo.stocking_number}`);
     }
     
-    console.log("Final product info:", JSON.stringify(productInfo, null, 2));
+    //console.log("Final product info:", JSON.stringify(productInfo, null, 2));
   } catch (error) {
     console.error('Error getting product info:', error);
   }
@@ -325,17 +282,17 @@ function getSelectedVariantId() {
   const urlParams = new URLSearchParams(window.location.search);
   const variantId = urlParams.get('variant');
   if (variantId) {
-    console.log(`Found variant ID in URL: ${variantId}`);
+    //console.log(`Found variant ID in URL: ${variantId}`);
     return variantId;
   }
   
   const variantSelector = document.querySelector('[name="id"]');
   if (variantSelector) {
-    console.log(`Found variant ID in selector: ${variantSelector.value}`);
+    //console.log(`Found variant ID in selector: ${variantSelector.value}`);
     return variantSelector.value;
   }
   
-  console.log("No variant ID found");
+  //console.log("No variant ID found");
   return null;
 }
 
@@ -354,8 +311,8 @@ function createDraftOrder(formData, productInfo) {
   
   draftOrderTitle += `${productInfo.title || 'Product'} - ${formData.practice_name}`;
   
-  console.log("Creating draft order with title:", draftOrderTitle);
-  console.log("Complete product info for draft order:", JSON.stringify(productInfo, null, 2));
+  //console.log("Creating draft order with title:", draftOrderTitle);
+  //console.log("Complete product info for draft order:", JSON.stringify(productInfo, null, 2));
   
   // Create line item from product info
   const lineItem = {
@@ -366,16 +323,6 @@ function createDraftOrder(formData, productInfo) {
     quantity: 1
   };
   
-  // Add product ID to ensure proper linking in Shopify admin
-  if (productInfo.id) {
-    const productId = typeof productInfo.id === 'string' && productInfo.id.includes('gid://') 
-      ? productInfo.id.split('/').pop()
-      : productInfo.id;
-    
-    lineItem.product_id = productId;
-    console.log(`Setting product_id: ${productId}`);
-  }
-  
   // Add variant ID if available
   if (productInfo.variant_id) {
     const variantId = typeof productInfo.variant_id === 'string' && productInfo.variant_id.includes('gid://') 
@@ -383,7 +330,7 @@ function createDraftOrder(formData, productInfo) {
       : productInfo.variant_id;
     
     lineItem.variant_id = variantId;
-    console.log(`Setting variant_id: ${variantId}`);
+    //console.log(`Setting variant_id: ${variantId}`);
   }
   
   // Add SKU if available
@@ -432,7 +379,7 @@ function createDraftOrder(formData, productInfo) {
     recaptcha_action: 'reserve_product' // Add action for v3 verification
   };
   
-  console.log("Sending draft order data:", JSON.stringify(draftOrderData, null, 2));
+  //console.log("Sending draft order data:", JSON.stringify(draftOrderData, null, 2));
   
   // Get the shop domain and create the app proxy URL
   const shopDomain = Shopify.shop || window.location.hostname;
@@ -456,8 +403,8 @@ function createDraftOrder(formData, productInfo) {
     return response.json();
   })
   .then(data => {
-    console.log("Draft order created successfully!");
-    console.log("FULL RESPONSE DATA:", JSON.stringify(data, null, 2));
+    //console.log("Draft order created successfully!");
+    //console.log("FULL RESPONSE DATA:", JSON.stringify(data, null, 2));
     
     // Continue with your existing success handling...
     // [Rest of success handling remains the same as your original code]
@@ -482,15 +429,16 @@ function createDraftOrder(formData, productInfo) {
     confirmationUrl.searchParams.append('role', formData.role || '');
     confirmationUrl.searchParams.append('product_title', productInfo.title || '');
     
-    console.log("Redirecting to confirmation page:", confirmationUrl.toString());
+    //console.log("Redirecting to confirmation page:", confirmationUrl.toString());
     window.location.href = confirmationUrl.toString();
   })
   .catch(error => {
     console.error('Error creating draft order:', error);
     showMessage('error', 'There was an error submitting your reservation. Please try again.');
+    toggleLoadingState(false);
   })
   .finally(() => {
-    toggleLoadingState(false);
+    // toggleLoadingState(false);
   });
 }
 
@@ -498,7 +446,8 @@ function createDraftOrder(formData, productInfo) {
  * Toggles loading state on the submit button
  */
 function toggleLoadingState(isLoading) {
-  const submitButton = document.querySelector('.submit-button');
+  const submitButton = document.querySelector('.reserve__submit-button');
+  const submitButtonText = submitButton ? submitButton.innerText : '';
   if (!submitButton) return;
   
   if (isLoading) {
@@ -508,7 +457,7 @@ function toggleLoadingState(isLoading) {
   } else {
     submitButton.disabled = false;
     submitButton.classList.remove('is-loading');
-    submitButton.innerText = submitButton.getAttribute('data-original-text') || 'Submit';
+    submitButton.innerText = submitButtonText || 'Submit';
   }
 }
 
