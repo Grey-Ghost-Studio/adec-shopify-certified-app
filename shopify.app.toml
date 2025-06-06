@@ -1,8 +1,8 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "9c9afb0d4165d7b0e2045605b204d625"
-name = "adec-dev-app"
-handle = "adec-dev-app"
+client_id = "c5085b159aa618092a5412b12b4b0e56"
+name = "adec-certified-app"
+handle = "adec-certified-app"
 application_url = "https://shopify.dev/apps/default-app-home"
 embedded = false
 
@@ -22,10 +22,10 @@ scopes = "write_draft_orders,read_draft_orders,read_orders,write_orders,read_pro
 [auth]
 redirect_urls = [
   "https://shopify.dev/apps/default-app-home/api/auth",
-  "https://adec-shopify-dev-app.netlify.app/.netlify/functions/oauth-callback",
+  "https://adec-certified.netlify.app/.netlify/functions/oauth-callback",
 ]
 
 [app_proxy]
 prefix = "apps"
 subpath = "create-draft-order"
-url = "https://adec-shopify-dev-app.netlify.app/.netlify/functions/create-draft-order"
+url = "https://adec-certified.netlify.app/.netlify/functions/create-draft-order"
