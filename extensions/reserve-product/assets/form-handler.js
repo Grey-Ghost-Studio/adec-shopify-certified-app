@@ -95,9 +95,9 @@ function getProductInfo() {
       productInfo.handle = product.handle;
       
       //console.log("Product JSON data:", {
-        title: product.title,
-        variants_count: product.variants ? product.variants.length : 0
-      });
+      //   title: product.title,
+      //   variants_count: product.variants ? product.variants.length : 0
+      // });
       
       // Try to get stocking number from metafields if available in JSON
       if (product.metafields && product.metafields.custom && product.metafields.custom.stocking_number) {
@@ -436,9 +436,6 @@ function createDraftOrder(formData, productInfo) {
     console.error('Error creating draft order:', error);
     showMessage('error', 'There was an error submitting your reservation. Please try again.');
     toggleLoadingState(false);
-  })
-  .finally(() => {
-    // toggleLoadingState(false);
   });
 }
 
