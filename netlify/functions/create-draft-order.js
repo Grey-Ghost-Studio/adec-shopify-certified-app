@@ -410,15 +410,15 @@ export const handler = async function(event, context) {
           );
         }
         
-        // 1. Set the is_reserved metafield
-        const isReservedMetafield = existingMetafields.find(
-          m => m.namespace === 'custom' && m.key === 'is_reserved'
+        // 1. Set the availability_status metafield to "Reserved"
+        const availabilityStatusMetafield = existingMetafields.find(
+          m => m.namespace === 'custom' && m.key === 'availability_status'
         );
         
-        if (isReservedMetafield) {
-          await updateMetafield(isReservedMetafield.id, 'true', 'boolean');
+        if (availabilityStatusMetafield) {
+          await updateMetafield(availabilityStatusMetafield.id, 'Reserved');
         } else {
-          await createMetafield('custom', 'is_reserved', 'true', 'boolean');
+          await createMetafield('custom', 'availability_status', 'Reserved');
         }
         
         // 2. Set the reservation_number metafield
@@ -444,8 +444,8 @@ export const handler = async function(event, context) {
         
         const updatedMetafields = verifyResponse.data.metafields;
         
-        const updatedIsReservedMetafield = updatedMetafields.find(
-          m => m.namespace === 'custom' && m.key === 'is_reserved'
+        const updatedAvailabilityStatusMetafield = updatedMetafields.find(
+          m => m.namespace === 'custom' && m.key === 'availability_status'
         );
         
         const updatedReservationNumberMetafield = updatedMetafields.find(
@@ -453,13 +453,13 @@ export const handler = async function(event, context) {
         );
         
         console.log("VERIFICATION:");
-        console.log(`- is_reserved metafield: ${updatedIsReservedMetafield ? 'Found (' + updatedIsReservedMetafield.value + ')' : 'Not found'}`);
+        console.log(`- availability_status metafield: ${updatedAvailabilityStatusMetafield ? 'Found (' + updatedAvailabilityStatusMetafield.value + ')' : 'Not found'}`);
         console.log(`- reservation_number metafield: ${updatedReservationNumberMetafield ? 'Found (' + updatedReservationNumberMetafield.value + ')' : 'Not found'}`);
         
         console.log(`Product successfully marked as reserved using metafields`);
         
         metafieldResult = {
-          is_reserved: updatedIsReservedMetafield ? updatedIsReservedMetafield.value : null,
+          availability_status: updatedAvailabilityStatusMetafield ? updatedAvailabilityStatusMetafield.value : null,
           reservation_number: reservationNumber
         };
       } catch (error) {
