@@ -9,9 +9,6 @@ embedded = false
 [build]
 include_config_on_deploy = true
 
-[api]
-api_version = "2024-10"
-
 [webhooks]
 api_version = "2024-10"
 
